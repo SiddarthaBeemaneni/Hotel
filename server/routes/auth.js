@@ -9,23 +9,33 @@ const { pool, executeWithRetry } = require('../db');
 const storageEngine = require('../services/storageEngine');
 
 /* ---------------------------------------------------------
-   Helper: Retrieve existing customer by email
+   Helper: Retrieve existing customer by email or phone
    --------------------------------------------------------- */
 async function getCustomerByEmail(email) {
-  if (!email) return null;
-  const cleanEmail = email.trim().toLowerCase();
+  return getCustomerByEmailOrPhone(email);
+}
+
+async function getCustomerByEmailOrPhone(identifier) {
+  if (!identifier) return null;
+  const clean = identifier.trim().toLowerCase();
+  const digitsOnly = identifier.replace(/\D/g, '');
 
   try {
     const [rows] = await executeWithRetry(
-      'SELECT * FROM customers WHERE LOWER(email) = ?',
-      [cleanEmail]
+      'SELECT * FROM customers WHERE LOWER(email) = ? OR phone_number = ? OR phone_number = ?',
+      [clean, identifier.trim(), clean]
     );
     if (rows && rows.length > 0) return rows[0];
   } catch (err) {
     // Graceful fallback to persistent storage
   }
 
-  return storageEngine.getCustomer(cleanEmail);
+  const byEmail = storageEngine.getCustomer(clean);
+  if (byEmail) return byEmail;
+  if (digitsOnly.length >= 7) {
+    return storageEngine.getCustomerByPhone(digitsOnly);
+  }
+  return null;
 }
 
 /* ---------------------------------------------------------
@@ -34,7 +44,7 @@ async function getCustomerByEmail(email) {
 async function syncCustomerRecord({ full_name, email, phone_number, password, nationality, loyalty_tier, auth_provider }) {
   const cleanEmail = (email || '').trim().toLowerCase();
   const name = (full_name || cleanEmail.split('@')[0]).trim();
-  const phone = phone_number || '';
+  const phone = phone_number ? phone_number.trim() : '';
   const nation = nationality || 'India';
   const tier = loyalty_tier || 'Bronze';
   const provider = auth_provider || 'email';
@@ -63,17 +73,18 @@ async function syncCustomerRecord({ full_name, email, phone_number, password, na
         `UPDATE customers
          SET full_name = COALESCE(NULLIF(?, ''), full_name),
              phone_number = COALESCE(NULLIF(?, ''), phone_number),
+             password = COALESCE(NULLIF(?, ''), password),
              nationality = COALESCE(NULLIF(?, ''), nationality),
              loyalty_tier = COALESCE(NULLIF(?, ''), loyalty_tier),
              auth_provider = ?
          WHERE customer_id = ?`,
-        [name, phone, nation, tier, provider, existing[0].customer_id]
+        [name, phone, pass, nation, tier, provider, existing[0].customer_id]
       );
     } else {
       await executeWithRetry(
-        `INSERT INTO customers (full_name, email, phone_number, nationality, loyalty_tier, auth_provider)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [name, cleanEmail, phone, nation, tier, provider]
+        `INSERT INTO customers (full_name, email, phone_number, password, nationality, loyalty_tier, auth_provider)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [name, cleanEmail, phone, pass, nation, tier, provider]
       );
     }
   } catch (err) {
@@ -85,6 +96,7 @@ async function syncCustomerRecord({ full_name, email, phone_number, password, na
 
 /* ---------------------------------------------------------
    POST /api/auth/register — Customer Registration
+   Saves full credentials into database and storage engine.
    --------------------------------------------------------- */
 router.post('/register', async (req, res) => {
   try {
@@ -96,23 +108,35 @@ router.post('/register', async (req, res) => {
     if (!full_name || !full_name.trim()) {
       return res.status(400).json({ success: false, error: 'Full name is required.' });
     }
+    if (!password || !password.trim()) {
+      return res.status(400).json({ success: false, error: 'Password is required to secure your account.' });
+    }
 
     const cleanEmail = email.trim().toLowerCase();
-    const existing = await getCustomerByEmail(cleanEmail);
+    const existing = await getCustomerByEmailOrPhone(cleanEmail);
+
+    // If an account is already registered with a password, alert user to login
+    if (existing && existing.password) {
+      return res.status(400).json({
+        success: false,
+        code: 'ALREADY_REGISTERED',
+        error: 'An account with this email is already registered. Please sign in with your password or use Forgot Password to reset it.'
+      });
+    }
 
     const customer = await syncCustomerRecord({
-      full_name,
+      full_name: full_name.trim(),
       email: cleanEmail,
-      phone_number,
-      password,
-      nationality: nationality || 'India',
-      loyalty_tier: loyalty_tier || 'Bronze',
+      phone_number: phone_number ? phone_number.trim() : (existing?.phone_number || ''),
+      password: password.trim(),
+      nationality: nationality || existing?.nationality || 'India',
+      loyalty_tier: loyalty_tier || existing?.loyalty_tier || 'Bronze',
       auth_provider: 'email'
     });
 
     res.status(201).json({
       success: true,
-      message: existing ? 'Account details updated successfully!' : 'Account registered successfully! Welcome to Siddartha Palace.',
+      message: 'Account registered successfully in database! Welcome to Siddartha Palace.',
       user: {
         customer_id: customer.customer_id,
         full_name: customer.full_name,
@@ -130,44 +154,51 @@ router.post('/register', async (req, res) => {
 
 /* ---------------------------------------------------------
    POST /api/auth/login — Customer or Admin Login
-   Automatically saves & updates customer details in database.
+   Authenticates using registered database credentials.
    --------------------------------------------------------- */
 router.post('/login', async (req, res) => {
   try {
-    const { email, password, role, full_name, access_role, phone_number } = req.body;
-    if (!email) {
-      return res.status(400).json({ success: false, error: 'Email is required.' });
+    const { email, identifier, password, role, full_name, access_role, phone_number } = req.body;
+    const loginTarget = (identifier || email || '').trim();
+    if (!loginTarget) {
+      return res.status(400).json({ success: false, error: 'Email or registered phone number is required.' });
+    }
+    if (!password) {
+      return res.status(400).json({ success: false, error: 'Password is required.' });
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanTarget = loginTarget.toLowerCase();
 
     // =========================================================
-    // 1. ADMIN LOGIN VERIFICATION
+    // 1. SUPER ADMIN LOGIN — STRICT CREDENTIAL VERIFICATION
     // =========================================================
-    if (role === 'admin' || cleanEmail.includes('admin@')) {
-      const allowedAdminEmails = [
-        'siddarthabeemaneni@gmail.com',
-        'admin@siddarthapalace.com'
-      ];
+    if (role === 'admin') {
+      const SUPER_ADMIN = {
+        name:     'siddarth',
+        email:    'siddarthabeemaneni@gmail.com',
+        password: 'thor_8981'
+      };
 
-      const isRegistered = allowedAdminEmails.includes(cleanEmail) || !!storageEngine.getCustomer(cleanEmail);
+      const nameProvided = (full_name || '').trim().toLowerCase();
+      const nameOk  = nameProvided === SUPER_ADMIN.name;
+      const emailOk = cleanTarget  === SUPER_ADMIN.email;
+      const passOk  = password     === SUPER_ADMIN.password;
 
-      if (!isRegistered && !cleanEmail.includes('admin@')) {
+      if (!nameOk || !emailOk || !passOk) {
         return res.status(403).json({
           success: false,
-          code: 'ADMIN_NOT_REGISTERED',
-          error: 'Access Denied: This administrator account is not registered. Please contact the super administrator or register first.'
+          code: 'INVALID_SUPER_ADMIN',
+          error: 'Access Denied: Invalid Super Administrator credentials. Please verify your full name, email and password.'
         });
       }
 
-      let adminName = full_name || 'Siddartha Beemaneni';
-      const existing = await getCustomerByEmail(cleanEmail);
-      if (existing && existing.full_name) adminName = existing.full_name;
+      const adminName = 'Siddarth';
 
-      // Update admin record in database
+      // Sync admin record to storage / DB
       await syncCustomerRecord({
         full_name: adminName,
-        email: cleanEmail,
+        email: SUPER_ADMIN.email,
+        password: SUPER_ADMIN.password,
         loyalty_tier: 'Platinum',
         auth_provider: 'email'
       });
@@ -177,7 +208,7 @@ router.post('/login', async (req, res) => {
         message: `Welcome, ${adminName}!`,
         user: {
           full_name: adminName,
-          email: cleanEmail,
+          email: SUPER_ADMIN.email,
           role: 'admin',
           access_role: access_role || 'Super Admin'
         }
@@ -185,12 +216,20 @@ router.post('/login', async (req, res) => {
     }
 
     // =========================================================
-    // 2. CUSTOMER LOGIN & AUTOMATIC DATABASE REGISTRATION/SYNC
+    // 2. CUSTOMER LOGIN WITH REGISTERED CREDENTIALS
     // =========================================================
-    let customer = await getCustomerByEmail(cleanEmail);
+    const customer = await getCustomerByEmailOrPhone(loginTarget);
 
-    // If customer already has a set password, verify it
-    if (customer && customer.password && password && customer.password !== password) {
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        code: 'NOT_REGISTERED',
+        error: 'No account found with this email or mobile number. Please click Create Account to register first.'
+      });
+    }
+
+    // If customer has a set password, verify it
+    if (customer.password && customer.password !== password) {
       return res.status(401).json({
         success: false,
         code: 'INVALID_PASSWORD',
@@ -198,27 +237,27 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Automatically store/update customer details in database & admin directory
-    customer = await syncCustomerRecord({
-      full_name: full_name || customer?.full_name || cleanEmail.split('@')[0],
-      email: cleanEmail,
-      phone_number: phone_number || customer?.phone_number || '',
-      password: password || customer?.password || '',
-      nationality: customer?.nationality || 'India',
-      loyalty_tier: customer?.loyalty_tier || 'Bronze',
-      auth_provider: 'email'
+    // Automatically update last_login and sync in database
+    const updatedCustomer = await syncCustomerRecord({
+      full_name: customer.full_name,
+      email: customer.email,
+      phone_number: customer.phone_number || phone_number || '',
+      password: customer.password || password,
+      nationality: customer.nationality || 'India',
+      loyalty_tier: customer.loyalty_tier || 'Bronze',
+      auth_provider: customer.auth_provider || 'email'
     });
 
     res.json({
       success: true,
-      message: `Welcome back, ${customer.full_name}!`,
+      message: `Welcome back, ${updatedCustomer.full_name}!`,
       user: {
-        customer_id: customer.customer_id,
-        full_name: customer.full_name,
-        email: customer.email,
-        phone_number: customer.phone_number || '',
-        nationality: customer.nationality || 'India',
-        loyalty_tier: customer.loyalty_tier || 'Bronze',
+        customer_id: updatedCustomer.customer_id,
+        full_name: updatedCustomer.full_name,
+        email: updatedCustomer.email,
+        phone_number: updatedCustomer.phone_number || '',
+        nationality: updatedCustomer.nationality || 'India',
+        loyalty_tier: updatedCustomer.loyalty_tier || 'Bronze',
         role: 'customer'
       }
     });

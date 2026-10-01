@@ -32,25 +32,13 @@ const memoryStore = {
 const DEFAULT_ACCOUNTS = [
   {
     customer_id: 1001,
-    full_name: 'Siddartha Beemaneni',
+    full_name: 'Siddarth',
     email: 'siddarthabeemaneni@gmail.com',
     phone_number: '+917396704027',
     nationality: 'India',
     loyalty_tier: 'Platinum',
-    auth_provider: 'google',
-    password: 'Password123',
-    created_at: '2026-08-28T00:00:00.000Z',
-    last_login: new Date().toISOString()
-  },
-  {
-    customer_id: 1002,
-    full_name: 'Admin Console',
-    email: 'admin@siddarthapalace.com',
-    phone_number: '+917396704027',
-    nationality: 'India',
-    loyalty_tier: 'Platinum',
     auth_provider: 'email',
-    password: 'Admin@123',
+    password: 'thor_8981',
     created_at: '2026-08-28T00:00:00.000Z',
     last_login: new Date().toISOString()
   }
@@ -132,6 +120,21 @@ function queueSaveBookings() {
 function getCustomer(email) {
   if (!email) return null;
   return memoryStore.customers.get(email.trim().toLowerCase()) || null;
+}
+
+function getCustomerByPhone(phone) {
+  if (!phone) return null;
+  const cleanPhone = phone.replace(/\D/g, '');
+  if (!cleanPhone) return null;
+  for (const customer of memoryStore.customers.values()) {
+    if (customer.phone_number) {
+      const custPhone = customer.phone_number.replace(/\D/g, '');
+      if (custPhone && (custPhone === cleanPhone || custPhone.endsWith(cleanPhone) || cleanPhone.endsWith(custPhone))) {
+        return customer;
+      }
+    }
+  }
+  return null;
 }
 
 function getAllCustomers() {
@@ -244,6 +247,7 @@ initializeStorage();
 
 module.exports = {
   getCustomer,
+  getCustomerByPhone,
   getAllCustomers,
   saveOrUpdateCustomer,
   updateCustomer,

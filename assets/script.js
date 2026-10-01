@@ -2,34 +2,88 @@
    SIDDARTHA PALACE — shared interactions
    ========================================================= */
 
-/* ---------- Auth state in Header ---------- */
+/* ---------- Auth state in Header & Logout ---------- */
 window.logoutAndRedirect = function(e) {
-  if (e) e.preventDefault();
+  if (e) {
+    if (typeof e.preventDefault === 'function') e.preventDefault();
+    if (typeof e.stopPropagation === 'function') e.stopPropagation();
+  }
   localStorage.removeItem('sp_user');
   localStorage.removeItem('sp_admin');
   localStorage.removeItem('sp_token');
+  window.dispatchEvent(new Event('user-auth-changed'));
   window.location.href = 'login.html';
 };
 
 function updateHeaderAuth() {
   const userStr = localStorage.getItem('sp_user');
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      if (user && user.full_name) {
-        document.querySelectorAll('a[href="login.html"]').forEach(btn => {
-          if (btn.classList.contains('btn') || btn.closest('.nav-cta')) {
-            const firstName = user.full_name.split(' ')[0];
-            btn.href = 'customer-dashboard.html';
-            btn.innerHTML = `<span>Account (${firstName})</span>`;
+  const adminStr = localStorage.getItem('sp_admin');
+
+  // ONLY target navigation CTA containers in headers, never dashboard sidebars or other pages
+  const navCtas = document.querySelectorAll('.site-header .nav-cta, header .nav-cta');
+  if (!navCtas.length) return;
+
+  navCtas.forEach(cta => {
+    if (adminStr) {
+      try {
+        const admin = JSON.parse(adminStr);
+        const name = (admin.full_name || 'Admin').split(' ')[0];
+        const existingGroup = cta.querySelector('.header-auth-group');
+        const loginLink = cta.querySelector('a[href="login.html"]');
+        const html = `
+          <div class="header-auth-group">
+            <a href="admin-dashboard.html" class="btn outline small header-account-btn"><span>👑 Admin (${name})</span></a>
+            <button type="button" class="header-logout-btn" onclick="logoutAndRedirect(event)" title="Log Out">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span>Logout</span>
+            </button>
+          </div>
+        `;
+        if (existingGroup) {
+          existingGroup.outerHTML = html;
+        } else if (loginLink) {
+          loginLink.outerHTML = html;
+        }
+        return;
+      } catch (e) {}
+    }
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user && user.full_name) {
+          const firstName = user.full_name.split(' ')[0];
+          const existingGroup = cta.querySelector('.header-auth-group');
+          const loginLink = cta.querySelector('a[href="login.html"]');
+          const html = `
+            <div class="header-auth-group">
+              <a href="customer-dashboard.html" class="btn outline small header-account-btn"><span>👤 ${firstName}</span></a>
+              <button type="button" class="header-logout-btn" onclick="logoutAndRedirect(event)" title="Log Out">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Logout</span>
+              </button>
+            </div>
+          `;
+          if (existingGroup) {
+            existingGroup.outerHTML = html;
+          } else if (loginLink) {
+            loginLink.outerHTML = html;
           }
-        });
-      }
-    } catch (e) {}
-  }
+          return;
+        }
+      } catch (e) {}
+    }
+
+    // If logged out, restore the Login button if a header-auth-group is present
+    const existingGroup = cta.querySelector('.header-auth-group');
+    if (existingGroup) {
+      existingGroup.outerHTML = `<a href="login.html" class="btn outline small"><span>Login</span></a>`;
+    }
+  });
 }
 updateHeaderAuth();
 document.addEventListener('DOMContentLoaded', updateHeaderAuth);
+window.addEventListener('user-auth-changed', updateHeaderAuth);
 
 /* ---------- Page loader ---------- */
 window.addEventListener('load', () => {

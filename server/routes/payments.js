@@ -4,7 +4,11 @@
 
 const express = require('express');
 const router  = express.Router();
-const { pool } = require('../db');
+const { executeWithRetry } = require('../db');
+
+function dbOffline(res) {
+  return res.status(503).json({ success: false, error: 'Database offline. Payment data unavailable.' });
+}
 
 /* GET /api/payments — list payments (optionally filter) */
 router.get('/', async (req, res) => {
@@ -25,9 +29,10 @@ router.get('/', async (req, res) => {
 
     sql += ' ORDER BY rp.created_at DESC';
 
-    const [rows] = await pool.execute(sql, params);
+    const [rows] = await executeWithRetry(sql, params);
     res.json({ success: true, data: rows });
   } catch (err) {
+    if (err.code === 'ECONNREFUSED' || err.code === 'ER_ACCESS_DENIED_ERROR') return dbOffline(res);
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -35,7 +40,7 @@ router.get('/', async (req, res) => {
 /* GET /api/payments/summary — aggregate stats */
 router.get('/summary', async (req, res) => {
   try {
-    const [rows] = await pool.execute(`
+    const [rows] = await executeWithRetry(`
       SELECT
         SUM(CASE WHEN payment_status = 'paid' THEN amount_paid ELSE 0 END) as total_paid,
         SUM(CASE WHEN payment_status IN ('pending','partial') THEN (amount_due - amount_paid) ELSE 0 END) as total_pending,
@@ -47,6 +52,7 @@ router.get('/summary', async (req, res) => {
     `);
     res.json({ success: true, data: rows[0] });
   } catch (err) {
+    if (err.code === 'ECONNREFUSED' || err.code === 'ER_ACCESS_DENIED_ERROR') return dbOffline(res);
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -55,7 +61,10 @@ router.get('/summary', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { tenant_id, month_year, amount_due, amount_paid, payment_method, payment_status, payment_date } = req.body;
-    const [result] = await pool.execute(
+    if (!tenant_id || !month_year || amount_due == null) {
+      return res.status(400).json({ success: false, error: 'tenant_id, month_year, and amount_due are required.' });
+    }
+    const [result] = await executeWithRetry(
       `INSERT INTO rent_payments
        (tenant_id, month_year, amount_due, amount_paid, payment_method, payment_status, payment_date)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -67,6 +76,7 @@ router.post('/', async (req, res) => {
     );
     res.status(201).json({ success: true, data: { payment_id: result.insertId } });
   } catch (err) {
+    if (err.code === 'ECONNREFUSED' || err.code === 'ER_ACCESS_DENIED_ERROR') return dbOffline(res);
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -75,7 +85,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { amount_paid, payment_method, payment_status, payment_date } = req.body;
-    const [result] = await pool.execute(
+    const [result] = await executeWithRetry(
       `UPDATE rent_payments
        SET amount_paid = ?, payment_method = ?, payment_status = ?, payment_date = ?
        WHERE payment_id = ?`,
@@ -85,9 +95,10 @@ router.put('/:id', async (req, res) => {
         req.params.id
       ]
     );
-    if (!result.affectedRows) return res.status(404).json({ success: false, error: 'Payment not found' });
+    if (!result || !result.affectedRows) return res.status(404).json({ success: false, error: 'Payment not found' });
     res.json({ success: true, message: 'Payment updated' });
   } catch (err) {
+    if (err.code === 'ECONNREFUSED' || err.code === 'ER_ACCESS_DENIED_ERROR') return dbOffline(res);
     res.status(500).json({ success: false, error: err.message });
   }
 });

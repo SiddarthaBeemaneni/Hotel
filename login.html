@@ -7,35 +7,222 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body>
+<body class="login-page-body">
 <div class="page-loader"><svg class="loader-mark" viewBox="0 0 40 40" fill="none"><path d="M20 4C10 4 4 12 4 20s6 16 16 16 16-8 16-16S30 4 20 4Z" stroke="#C9A227" stroke-width="1.4" stroke-dasharray="6 6"/></svg></div>
 
-<header class="site-header">
-  <div class="nav-wrap">
-    <a href="index.html" class="brand">
-      <svg class="crest" viewBox="0 0 40 40" fill="none"><path d="M20 3C11 3 6 10 6 18v16h6V19c0-7 3.5-11 8-11s8 4 8 11v15h6V18C34 10 29 3 20 3Z" stroke="#C9A227" stroke-width="1.6"/><circle cx="20" cy="16" r="2.4" fill="#C9A227"/></svg>
-      <span class="brand-text"><b>Siddartha Palace</b><em>Est. Heritage &amp; Grace</em></span>
+<!-- Fullpage Fixed Background Image of the Palace -->
+<div class="login-page-backdrop"></div>
+
+<header class="site-header" style="background:transparent; border-bottom:none; position:relative; z-index:10; padding:28px 0 10px;">
+  <div class="container" style="display:flex; justify-content:center; align-items:center;">
+    <a href="index.html" class="brand" style="display:flex; align-items:center; gap:14px; text-decoration:none;">
+      <svg class="crest" viewBox="0 0 40 40" fill="none" style="width:46px; height:46px; filter:drop-shadow(0 2px 8px rgba(0,0,0,0.6));"><path d="M20 3C11 3 6 10 6 18v16h6V19c0-7 3.5-11 8-11s8 4 8 11v15h6V18C34 10 29 3 20 3Z" stroke="#E7C766" stroke-width="1.8"/><circle cx="20" cy="16" r="2.4" fill="#E7C766"/></svg>
+      <span class="brand-text" style="display:flex; flex-direction:column; text-align:left;">
+        <b style="font-size:1.6rem; color:#FFFFFF; letter-spacing:.02em; line-height:1.2; text-shadow:0 2px 10px rgba(0,0,0,0.85);">Siddartha Palace</b>
+        <em style="font-size:.78rem; letter-spacing:.18em; color:#E7C766; font-style:normal; text-transform:uppercase; text-shadow:0 1px 6px rgba(0,0,0,0.85);">Est. Heritage &amp; Grace</em>
+      </span>
     </a>
-    <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="rooms.html">Rooms &amp; Suites</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="about.html">About</a>
-      <a href="faq.html">FAQ</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-    <div class="nav-cta">
-      <a href="rooms.html" class="btn gold small"><span>Book Now</span></a>
-    </div>
-    <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 
-<section class="hero" style="min-height:auto; padding:100px 0 90px;">
-  <div class="container" style="position:relative; z-index:2; max-width:520px;">
-    <div class="panel" style="background:rgba(251,248,241,.97);">
+<style>
+  body.login-page-body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #120A1E;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .login-page-backdrop {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: 
+      linear-gradient(180deg, rgba(18, 10, 30, 0.25) 0%, rgba(18, 10, 30, 0.1) 40%, rgba(18, 10, 30, 0.55) 100%),
+      radial-gradient(ellipse at 50% 35%, rgba(18, 10, 30, 0.0) 0%, rgba(18, 10, 30, 0.4) 100%),
+      url('assets/images/hero-palace.jpg');
+    background-size: cover;
+    background-position: center 22%;
+    background-repeat: no-repeat;
+    z-index: 0;
+    pointer-events: none;
+    transform: scale(1.01);
+  }
+  .login-section {
+    flex: 1;
+    min-height: auto;
+    padding: 16px 20px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+  .login-container {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .login-card {
+    background: rgba(251, 248, 241, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
+    border-radius: 20px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(201, 162, 39, 0.2);
+    padding: 44px 50px;
+  }
+  .main-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    border-bottom: 2px solid rgba(27, 16, 48, 0.12);
+    margin-bottom: 28px;
+  }
+  .main-tabs .tab-btn {
+    font-size: 1.18rem;
+    font-weight: 600;
+    padding: 12px 28px;
+    color: var(--text-dark);
+    letter-spacing: 0.04em;
+    position: relative;
+  }
+  .main-tabs .tab-btn.active {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .main-tabs .tab-btn::after {
+    height: 3px;
+    border-radius: 3px;
+  }
+  .role-tabs {
+    border-bottom: none !important;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .role-pill {
+    padding: 10px 32px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    border: 1.5px solid rgba(27, 16, 48, 0.18) !important;
+    border-radius: 30px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(8px);
+    color: var(--text-dark) !important;
+    cursor: pointer;
+    transition: all 0.25s ease !important;
+  }
+  .role-pill::after {
+    display: none !important;
+  }
+  .role-pill:hover {
+    background: #ffffff !important;
+    border-color: var(--gold) !important;
+    color: var(--ink) !important;
+  }
+  .role-pill.active {
+    background: linear-gradient(135deg, rgba(245, 236, 208, 0.95) 0%, rgba(236, 217, 156, 0.95) 100%) !important;
+    border-color: var(--gold) !important;
+    color: var(--ink) !important;
+    box-shadow: 0 4px 14px rgba(201, 162, 39, 0.35) !important;
+  }
+  .google-signin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(27, 16, 48, 0.18);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #2D253A;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.25s ease;
+    margin-bottom: 20px;
+  }
+  .google-signin-btn:hover {
+    border-color: rgba(27, 16, 48, 0.38);
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  }
+  .login-card .form-field label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .login-card .form-field input,
+  .login-card .form-field select {
+    padding: 14px 18px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1.5px solid rgba(27, 16, 48, 0.2);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: all 0.25s ease;
+  }
+  .login-card .form-field input:focus,
+  .login-card .form-field select:focus {
+    background: #ffffff;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3.5px rgba(201, 162, 39, 0.25);
+  }
+  .login-submit-btn {
+    padding: 15px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 16px rgba(201, 162, 39, 0.35) !important;
+  }
+  @media (max-width: 768px) {
+    .login-section {
+      padding: 16px 14px 36px;
+    }
+    .login-card {
+      padding: 28px 18px !important;
+      border-radius: 16px;
+    }
+    .main-tabs {
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .main-tabs .tab-btn {
+      padding: 10px 18px;
+      font-size: 1.05rem;
+    }
+    .role-pill {
+      padding: 8px 22px !important;
+      font-size: 0.88rem !important;
+    }
+  }
+</style>
 
-      <div class="tabs" data-target="account">
+<main class="login-section">
+  <div class="container login-container">
+    
+    <!-- State 1: When user is NOT logged in (Auth Forms Card) -->
+    <div class="panel login-card" id="authFormsCard">
+
+      <div class="tabs main-tabs" data-target="account">
         <button class="tab-btn active" data-tab="login">Sign In</button>
         <button class="tab-btn" data-tab="register">Register</button>
       </div>
@@ -44,20 +231,20 @@
 
         <!-- LOGIN -->
         <div class="tab-panel active" data-tab="login">
-          <div class="tabs" data-target="loginRole" style="border-bottom:none; gap:10px; margin-bottom:20px;">
-            <button class="tab-btn active" data-tab="customer" style="border:1px solid rgba(27,16,48,.15); border-radius:20px;">Customer</button>
-            <button class="tab-btn" data-tab="admin" style="border:1px solid rgba(27,16,48,.15); border-radius:20px;">Admin</button>
+          <div class="tabs role-tabs" data-target="loginRole">
+            <button class="tab-btn role-pill active" data-tab="customer">Customer</button>
+            <button class="tab-btn role-pill" data-tab="admin">Admin</button>
           </div>
 
           <div data-panel-group="loginRole">
-            <form class="tab-panel active" data-tab="customer" id="customerLoginForm">
+            <form class="tab-panel active" data-tab="customer" id="customerLoginForm" autocomplete="off">
               <!-- Inline Alert for Login Error -->
               <div id="customerLoginAlert" style="display:none; background:#FDEDED; border:1px solid #F5C6CB; color:#721C24; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:.88rem; line-height:1.5;">
               </div>
 
               <!-- Google Sign-In Button -->
-              <button type="button" class="btn outline block" id="googleSignInBtn" style="display:flex; align-items:center; justify-content:center; gap:10px; border-color:rgba(27,16,48,.2); margin-bottom:18px; background:#fff; color:#333;">
-                <svg width="18" height="18" viewBox="0 0 24 24">
+              <button type="button" class="google-signin-btn" id="googleSignInBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
                   <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"/>
                   <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
@@ -66,106 +253,163 @@
                 <span>Continue with Google</span>
               </button>
 
-              <div class="flex items-center gap-2" style="margin-bottom:18px;">
-                <div style="flex:1; height:1px; background:rgba(27,16,48,.12);"></div>
-                <span class="muted" style="font-size:.78rem; text-transform:uppercase; letter-spacing:.08em;">or sign in with email</span>
-                <div style="flex:1; height:1px; background:rgba(27,16,48,.12);"></div>
+              <div class="flex items-center gap-3" style="margin-bottom:24px;">
+                <div style="flex:1; height:1px; background:rgba(27,16,48,.14);"></div>
+                <span class="muted" style="font-size:.82rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--text-soft);">or sign in with email</span>
+                <div style="flex:1; height:1px; background:rgba(27,16,48,.14);"></div>
               </div>
 
               <div class="form-field">
                 <label for="cEmail">Registered Email Address</label>
-                <input type="email" id="cEmail" required placeholder="you@example.com">
+                <input type="email" id="cEmail" name="sp_cust_email" required placeholder="you@example.com" autocomplete="off" value="">
                 <span class="hint">Please enter your registered email.</span>
               </div>
               <div class="form-field">
                 <label for="cPass">Password</label>
-                <input type="password" id="cPass" required placeholder="••••••••">
+                <input type="password" id="cPass" name="sp_cust_password" required placeholder="••••••••" autocomplete="new-password" value="">
                 <span class="hint">Enter your account password.</span>
               </div>
-              <div class="flex justify-between items-center mt-1" style="margin-bottom:20px;">
-                <label class="muted flex items-center gap-1" style="font-size:.82rem;"><input type="checkbox" checked style="width:auto;"> Remember me</label>
-                <button type="button" id="forgotPassBtn" style="background:none; border:none; cursor:pointer; font-size:.82rem; color:var(--maroon); font-weight:600;">Forgot password?</button>
+              <div class="flex justify-between items-center mt-1" style="margin-bottom:24px;">
+                <label class="muted flex items-center gap-2" style="font-size:.9rem; cursor:pointer;"><input type="checkbox" checked style="width:17px; height:17px; accent-color:var(--gold);"> Remember me</label>
+                <button type="button" id="forgotPassBtn" style="background:none; border:none; cursor:pointer; font-size:.9rem; color:var(--maroon); font-weight:600;">Forgot password?</button>
               </div>
-              <button type="submit" class="btn gold block" id="customerSignInBtn"><span>Sign In as Customer</span></button>
+              <button type="submit" class="btn gold block login-submit-btn" id="customerSignInBtn"><span>Sign In as Customer</span></button>
             </form>
 
-            <form class="tab-panel" data-tab="admin" id="adminLoginForm">
+            <form class="tab-panel" data-tab="admin" id="adminLoginForm" autocomplete="off">
               <!-- Inline Alert for Admin Login Error -->
               <div id="adminLoginAlert" style="display:none; background:#FDEDED; border:1px solid #F5C6CB; color:#721C24; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:.88rem; line-height:1.5;">
               </div>
 
-              <div class="form-field">
-                <label for="aName">Your Full Name (Administrator)</label>
-                <input type="text" id="aName" required placeholder="e.g. Siddartha Beemaneni" value="Siddartha Beemaneni">
-                <span class="hint">Enter your administrator name.</span>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="aName">Your Full Name (Administrator)</label>
+                  <input type="text" id="aName" name="sp_adm_name" required placeholder="e.g. Administrator Name" autocomplete="off" value="">
+                  <span class="hint">Enter your administrator name.</span>
+                </div>
+                <div class="form-field">
+                  <label for="aEmail">Registered Admin Email</label>
+                  <input type="email" id="aEmail" name="sp_adm_email" required placeholder="admin@siddarthapalace.com" autocomplete="off" value="">
+                  <span class="hint">Please enter your authorized admin email.</span>
+                </div>
               </div>
-              <div class="form-field">
-                <label for="aEmail">Registered Admin Email</label>
-                <input type="email" id="aEmail" required placeholder="admin@siddarthapalace.com" value="siddarthabeemaneni@gmail.com">
-                <span class="hint">Please enter your authorized admin email.</span>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="aPass">Password</label>
+                  <input type="password" id="aPass" name="sp_adm_password" required placeholder="••••••••" autocomplete="new-password" value="">
+                  <span class="hint">Please enter your password.</span>
+                </div>
+                <div class="form-field">
+                  <label for="aRole">Access Role</label>
+                  <select id="aRole">
+                    <option>Super Admin</option>
+                    <option>Front Desk Manager</option>
+                    <option>Bookings Manager</option>
+                    <option>Accounts / Payments</option>
+                  </select>
+                </div>
               </div>
-              <div class="form-field">
-                <label for="aPass">Password</label>
-                <input type="password" id="aPass" required placeholder="••••••••" value="Admin@123">
-                <span class="hint">Please enter your password.</span>
-              </div>
-              <div class="form-field">
-                <label for="aRole">Access Role</label>
-                <select id="aRole">
-                  <option>Super Admin</option>
-                  <option>Front Desk Manager</option>
-                  <option>Bookings Manager</option>
-                  <option>Accounts / Payments</option>
-                </select>
-              </div>
-              <button type="submit" class="btn gold block"><span>Sign In as Admin</span></button>
+              <button type="submit" class="btn gold block login-submit-btn" style="margin-top:6px;"><span>Sign In as Admin</span></button>
             </form>
           </div>
         </div>
 
         <!-- REGISTER -->
         <div class="tab-panel" data-tab="register">
-          <form id="registerForm">
+          <form id="registerForm" autocomplete="off">
             <!-- Inline Alert for Registration Status -->
             <div id="registerAlert" style="display:none; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:.88rem; line-height:1.5;"></div>
 
-            <div class="form-field">
-              <label for="rName">Full Name</label>
-              <input type="text" id="rName" required placeholder="Your full name (e.g. Siddartha)">
-              <span class="hint">Please enter your name.</span>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="rName">Full Name</label>
+                <input type="text" id="rName" name="sp_reg_name" required placeholder="Your full name" autocomplete="off" value="">
+                <span class="hint">Please enter your name.</span>
+              </div>
+              <div class="form-field">
+                <label for="rPhone">Phone Number</label>
+                <input type="tel" id="rPhone" name="sp_reg_phone" placeholder="+91 98765 43210" autocomplete="off" value="">
+                <span class="hint">Please enter your phone number.</span>
+              </div>
             </div>
-            <div class="form-field">
-              <label for="rEmail">Email Address</label>
-              <input type="email" id="rEmail" required placeholder="you@example.com">
-              <span class="hint">Please enter a valid email.</span>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="rEmail">Email Address</label>
+                <input type="email" id="rEmail" name="sp_reg_email" required placeholder="you@example.com" autocomplete="off" value="">
+                <span class="hint">Please enter a valid email.</span>
+              </div>
+              <div class="form-field">
+                <label for="rPass">Create Password</label>
+                <input type="password" id="rPass" name="sp_reg_password" placeholder="At least 8 characters" autocomplete="new-password" value="">
+                <span class="hint">Password must be at least 8 characters.</span>
+              </div>
             </div>
-            <div class="form-field">
-              <label for="rPhone">Phone Number</label>
-              <input type="tel" id="rPhone" placeholder="+91 98765 43210">
-              <span class="hint">Please enter your phone number.</span>
+            <div class="form-field" style="margin-bottom:24px;">
+              <label class="muted flex items-center gap-2" style="text-transform:none; font-size:.88rem; cursor:pointer;"><input type="checkbox" required checked style="width:17px; height:17px; accent-color:var(--gold);"> I agree to the <a href="policies.html" style="color:var(--maroon); font-weight:600; text-decoration:underline;">&nbsp;Terms &amp; Privacy Policy</a></label>
             </div>
-            <div class="form-field">
-              <label for="rPass">Create Password</label>
-              <input type="password" id="rPass" placeholder="At least 8 characters">
-              <span class="hint">Password must be at least 8 characters.</span>
-            </div>
-            <div class="form-field">
-              <label class="muted flex items-center gap-1" style="text-transform:none; font-size:.85rem;"><input type="checkbox" required checked style="width:auto;"> I agree to the <a href="policies.html" style="color:var(--maroon); text-decoration:underline;">&nbsp;Terms &amp; Privacy Policy</a></label>
-            </div>
-            <button type="submit" class="btn gold block" id="registerSubmitBtn"><span>Create Account</span></button>
+            <button type="submit" class="btn gold block login-submit-btn" id="registerSubmitBtn"><span>Create Account</span></button>
           </form>
         </div>
 
       </div>
     </div>
+
+    <!-- State 2: When Customer is Logged In (Customer Details Card) -->
+    <div class="panel login-card" id="customerSessionCard" style="display:none; text-align:center; padding:48px 44px;">
+      <div style="width:76px; height:76px; border-radius:50%; background:linear-gradient(135deg, var(--gold), var(--maroon)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:700; margin:0 auto 16px; box-shadow:0 10px 26px rgba(201,162,39,0.35);" id="cardAvatar">S</div>
+      
+      <span class="badge ok" id="cardTierBadge" style="font-size:.78rem; padding:5px 16px; letter-spacing:.06em; margin-bottom:10px;">Bronze Tier Guest</span>
+      <h2 style="font-size:2rem; margin:10px 0 4px; color:var(--ink);" id="cardCustomerName">Siddartha Beemaneni</h2>
+      <p class="muted" style="font-size:.95rem; margin-bottom:28px;">You are currently signed into your Siddartha Palace account.</p>
+
+      <!-- Customer Details Summary Box -->
+      <div style="background:rgba(255,255,255,0.85); backdrop-filter:blur(8px); border:1.5px solid rgba(201,162,39,0.3); border-radius:14px; padding:24px 28px; text-align:left; margin-bottom:30px; box-shadow:0 4px 18px rgba(27,16,48,0.08);">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <div>
+            <span style="font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--text-soft); display:block; margin-bottom:4px;">Full Name</span>
+            <strong style="font-size:.98rem; color:var(--ink);" id="detailName">Siddartha Beemaneni</strong>
+          </div>
+          <div>
+            <span style="font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--text-soft); display:block; margin-bottom:4px;">Email Address</span>
+            <strong style="font-size:.98rem; color:var(--ink);" id="detailEmail">siddarthabeemaneni@gmail.com</strong>
+          </div>
+          <div>
+            <span style="font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--text-soft); display:block; margin-bottom:4px;">Contact Phone</span>
+            <strong style="font-size:.98rem; color:var(--ink);" id="detailPhone">+91 98765 43210</strong>
+          </div>
+          <div>
+            <span style="font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--text-soft); display:block; margin-bottom:4px;">Account Status</span>
+            <strong style="font-size:.98rem; color:var(--emerald); display:flex; align-items:center; gap:6px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:var(--emerald); display:inline-block;"></span> Active &amp; Verified
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <a href="customer-dashboard.html" class="btn gold block login-submit-btn" style="text-align:center; font-size:1.02rem;">
+          <span>👑 Enter Customer Dashboard</span>
+        </a>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <a href="rooms.html" class="btn outline" style="text-align:center; font-size:.92rem; padding:13px 18px; border-radius:8px;">
+            <span>Browse Rooms &amp; Suites</span>
+          </a>
+          <button type="button" class="btn outline" onclick="logoutCustomer()" style="font-size:.92rem; padding:13px 18px; border-radius:8px; color:var(--maroon); border-color:rgba(110,30,43,0.3); cursor:pointer;">
+            <span>Sign Out / Switch</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
-</section>
+</main>
 
 <!-- =========================================================
      FORGOT PASSWORD & OTP RECOVERY MODAL
      ========================================================= -->
 <div id="forgotPasswordModal" style="display:none; position:fixed; inset:0; background:rgba(27,16,48,.8); z-index:9999; align-items:center; justify-content:center; padding:16px;">
-  <div class="panel" style="max-width:480px; width:100%; position:relative; background:#fff; border-radius:12px; box-shadow:0 25px 60px rgba(0,0,0,.35); padding:32px;">
+  <div class="panel" style="max-width:580px; width:100%; position:relative; background:#fff; border-radius:14px; box-shadow:0 25px 70px rgba(0,0,0,.35); padding:38px 44px;">
     
     <button type="button" id="closeFpModal" aria-label="Close" style="position:absolute; top:18px; right:18px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:var(--ink); line-height:1;">&times;</button>
     
@@ -197,15 +441,15 @@
 
         <div class="form-field" id="fpEmailField">
           <label for="fpEmail">Registered Gmail / Email</label>
-          <input type="email" id="fpEmail" placeholder="your.email@gmail.com" style="padding:11px 14px;">
+          <input type="email" id="fpEmail" placeholder="your.email@gmail.com" style="padding:13px 16px; border-radius:8px;">
         </div>
 
         <div class="form-field" id="fpPhoneField" style="display:none;">
           <label for="fpPhone">Registered Mobile Phone Number</label>
-          <input type="tel" id="fpPhone" placeholder="+91 98765 43210" style="padding:11px 14px;">
+          <input type="tel" id="fpPhone" placeholder="+91 98765 43210" style="padding:13px 16px; border-radius:8px;">
         </div>
 
-        <button type="submit" class="btn gold block" id="fpSendOtpBtn" style="margin-top:16px;"><span>Send 6-Digit OTP</span></button>
+        <button type="submit" class="btn gold block login-submit-btn" id="fpSendOtpBtn" style="margin-top:16px;"><span>Send 6-Digit OTP</span></button>
       </form>
     </div>
 
@@ -224,13 +468,13 @@
           <span class="hint" style="text-align:center;">Enter the 6-digit numeric OTP.</span>
         </div>
 
-        <div class="flex justify-between items-center mt-1" style="font-size:.82rem; margin-bottom:18px;">
+        <div class="flex justify-between items-center mt-1" style="font-size:.85rem; margin-bottom:18px;">
           <span class="muted" id="fpTimerText">Code expires in: <strong id="fpCountdown">02:00</strong></span>
           <button type="button" id="fpResendBtn" style="background:none; border:none; color:var(--maroon); cursor:pointer; font-weight:600;">Resend OTP</button>
         </div>
 
-        <button type="submit" class="btn gold block" id="fpVerifyBtn"><span>Verify Code</span></button>
-        <button type="button" class="btn outline block mt-1" id="fpBackToStep1" style="font-size:.85rem;"><span>Change Email / Mobile</span></button>
+        <button type="submit" class="btn gold block login-submit-btn" id="fpVerifyBtn"><span>Verify Code</span></button>
+        <button type="button" class="btn outline block mt-1" id="fpBackToStep1" style="font-size:.9rem; padding:12px 18px; border-radius:8px;"><span>Change Email / Mobile</span></button>
       </form>
     </div>
 
@@ -245,13 +489,13 @@
       <form id="fpResetPassForm">
         <div class="form-field">
           <label for="fpNewPassword">New Password</label>
-          <input type="password" id="fpNewPassword" required minlength="6" placeholder="At least 6 characters" style="padding:11px 14px;">
+          <input type="password" id="fpNewPassword" required minlength="6" placeholder="At least 6 characters" style="padding:13px 16px; border-radius:8px;">
         </div>
         <div class="form-field">
           <label for="fpConfirmPassword">Confirm New Password</label>
-          <input type="password" id="fpConfirmPassword" required minlength="6" placeholder="Repeat your new password" style="padding:11px 14px;">
+          <input type="password" id="fpConfirmPassword" required minlength="6" placeholder="Repeat your new password" style="padding:13px 16px; border-radius:8px;">
         </div>
-        <button type="submit" class="btn gold block" id="fpSavePassBtn"><span>Update Password &amp; Sign In</span></button>
+        <button type="submit" class="btn gold block login-submit-btn" id="fpSavePassBtn"><span>Update Password &amp; Sign In</span></button>
       </form>
     </div>
 
@@ -260,38 +504,37 @@
 
 <!-- Google Sign-In Quick Modal -->
 <div id="googleModal" style="display:none; position:fixed; inset:0; background:rgba(27,16,48,.8); z-index:1000; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#fff; border-radius:12px; max-width:440px; width:100%; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,.35); position:relative;">
-    <div class="flex items-center gap-2" style="margin-bottom:16px;">
-      <svg width="24" height="24" viewBox="0 0 24 24">
+  <div style="background:#fff; border-radius:14px; max-width:520px; width:100%; padding:38px 42px; box-shadow:0 25px 70px rgba(0,0,0,.35); position:relative;">
+    <div class="flex items-center gap-3" style="margin-bottom:18px;">
+      <svg width="26" height="26" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
         <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"/>
         <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
         <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
       </svg>
-      <h3 style="margin:0; font-size:1.3rem;">Sign in with Google</h3>
+      <h3 style="margin:0; font-size:1.35rem;">Sign in with Google</h3>
     </div>
-    <p class="muted" style="font-size:.9rem; margin-bottom:20px;">Enter your details to sign in and save your profile to the Siddartha Palace database.</p>
+    <p class="muted" style="font-size:.92rem; margin-bottom:22px;">Enter your details to sign in and save your profile to the Siddartha Palace database.</p>
     <form id="googleAuthForm">
       <div class="form-field">
-        <label for="gName">Your Full Name</label>
-        <input type="text" id="gName" required placeholder="e.g. Siddartha">
+        <label for="gName" style="font-weight:600; font-size:.8rem; letter-spacing:.08em;">Your Full Name</label>
+        <input type="text" id="gName" required placeholder="e.g. Siddartha" style="padding:13px 16px; border-radius:8px;">
       </div>
       <div class="form-field">
-        <label for="gEmail">Google Account Email</label>
-        <input type="email" id="gEmail" required placeholder="you@gmail.com">
+        <label for="gEmail" style="font-weight:600; font-size:.8rem; letter-spacing:.08em;">Google Account Email</label>
+        <input type="email" id="gEmail" required placeholder="you@gmail.com" style="padding:13px 16px; border-radius:8px;">
       </div>
-      <div class="flex gap-1 mt-2">
-        <button type="submit" class="btn gold" style="flex:1;"><span>Continue</span></button>
-        <button type="button" class="btn outline" style="flex:1;" onclick="document.getElementById('googleModal').style.display='none'"><span>Cancel</span></button>
+      <div class="flex gap-2 mt-2">
+        <button type="submit" class="btn gold" style="flex:1; padding:14px; border-radius:8px; font-weight:600;"><span>Continue</span></button>
+        <button type="button" class="btn outline" style="flex:1; padding:14px; border-radius:8px; font-weight:600;" onclick="document.getElementById('googleModal').style.display='none'"><span>Cancel</span></button>
       </div>
     </form>
   </div>
 </div>
 
-<footer class="site-footer" style="padding:40px 0;">
-  <div class="container foot-bottom" style="border-top:none;">
+<footer style="position:relative; z-index:10; padding:18px 0 24px; text-align:center; color:rgba(255,255,255,0.7); font-size:.84rem; text-shadow:0 1px 4px rgba(0,0,0,0.8);">
+  <div class="container">
     <span>© 2026 Siddartha Palace. All rights reserved.</span>
-    <span class="flex gap-2"><a href="index.html" style="padding:0;">Home</a><a href="contact.html" style="padding:0;">Contact</a></span>
   </div>
 </footer>
 
@@ -299,11 +542,103 @@
 <script>
   const API_BASE = '/api';
 
+  /* ---------- Render Logged-In Customer Details Only ---------- */
+  function checkAndRenderCustomerSession() {
+    const userStr = localStorage.getItem('sp_user');
+    const authCard = document.getElementById('authFormsCard');
+    const sessionCard = document.getElementById('customerSessionCard');
+    const hdrLoggedOut = document.getElementById('headerLoggedOut');
+    const hdrLoggedIn = document.getElementById('headerLoggedIn');
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user && (user.full_name || user.email)) {
+          // Customer is logged in -> show only their details
+          if (authCard) authCard.style.display = 'none';
+          if (sessionCard) sessionCard.style.display = 'block';
+          if (hdrLoggedOut) hdrLoggedOut.style.display = 'none';
+          if (hdrLoggedIn) hdrLoggedIn.style.display = 'flex';
+
+          const name = user.full_name || 'Valued Guest';
+          const email = user.email || 'guest@siddarthapalace.com';
+          const phone = user.phone_number || user.phone || 'Not provided';
+          const tier = user.loyalty_tier || 'Bronze';
+          const initial = name.charAt(0).toUpperCase() || 'G';
+
+          const hdrAvatar = document.getElementById('hdrAvatar');
+          if (hdrAvatar) hdrAvatar.textContent = initial;
+          const hdrUserName = document.getElementById('hdrUserName');
+          if (hdrUserName) hdrUserName.textContent = name.split(' ')[0];
+          const hdrUserEmail = document.getElementById('hdrUserEmail');
+          if (hdrUserEmail) hdrUserEmail.textContent = email;
+          const hdrUserTier = document.getElementById('hdrUserTier');
+          if (hdrUserTier) hdrUserTier.textContent = tier;
+
+          const cardAvatar = document.getElementById('cardAvatar');
+          if (cardAvatar) cardAvatar.textContent = initial;
+          const cardCustName = document.getElementById('cardCustomerName');
+          if (cardCustName) cardCustName.textContent = name;
+          const cardTier = document.getElementById('cardTierBadge');
+          if (cardTier) cardTier.textContent = `${tier} Tier Guest`;
+
+          const dName = document.getElementById('detailName');
+          if (dName) dName.textContent = name;
+          const dEmail = document.getElementById('detailEmail');
+          if (dEmail) dEmail.textContent = email;
+          const dPhone = document.getElementById('detailPhone');
+          if (dPhone) dPhone.textContent = phone;
+          return true;
+        }
+      } catch (e) {
+        console.warn('Session parse error:', e);
+      }
+    }
+
+    // Customer is NOT logged in -> show login/register form
+    if (authCard) authCard.style.display = 'block';
+    if (sessionCard) sessionCard.style.display = 'none';
+    if (hdrLoggedOut) hdrLoggedOut.style.display = 'flex';
+    if (hdrLoggedIn) hdrLoggedIn.style.display = 'none';
+    return false;
+  }
+
+  function clearAllAuthInputs() {
+    ['cEmail', 'cPass', 'aName', 'aEmail', 'aPass', 'rName', 'rPhone', 'rEmail', 'rPass', 'gName', 'gEmail'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  }
+
+  window.logoutCustomer = function() {
+    localStorage.removeItem('sp_user');
+    localStorage.removeItem('sp_admin');
+    localStorage.removeItem('sp_token');
+    window.dispatchEvent(new Event('user-auth-changed'));
+    checkAndRenderCustomerSession();
+    clearAllAuthInputs();
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    checkAndRenderCustomerSession();
+    clearAllAuthInputs();
+  });
+
+  // Clear alerts and reset focus on tab change
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cAlert = document.getElementById('customerLoginAlert');
+      if (cAlert) cAlert.style.display = 'none';
+      const aAlert = document.getElementById('adminLoginAlert');
+      if (aAlert) aAlert.style.display = 'none';
+      const rAlert = document.getElementById('registerAlert');
+      if (rAlert) rAlert.style.display = 'none';
+    });
+  });
+
   // Google Sign-In Click
   document.getElementById('googleSignInBtn').addEventListener('click', () => {
-    // Check if we have prefilled email
-    const cEmail = document.getElementById('cEmail').value.trim();
-    if (cEmail) document.getElementById('gEmail').value = cEmail;
+    clearAllAuthInputs();
     document.getElementById('googleModal').style.display = 'flex';
   });
 
@@ -324,22 +659,20 @@
       if (data.success && data.user) {
         localStorage.setItem('sp_user', JSON.stringify(data.user));
         document.getElementById('googleModal').style.display = 'none';
-        window.location.href = 'index.html';
+        checkAndRenderCustomerSession();
         return;
       } else {
         alert(data.error || 'Google sign-in failed. Please try again.');
       }
     } catch (err) {
-      // Fallback local save if offline
       const user = { full_name, email, loyalty_tier: 'Bronze', role: 'customer' };
       localStorage.setItem('sp_user', JSON.stringify(user));
       document.getElementById('googleModal').style.display = 'none';
-      window.location.href = 'index.html';
+      checkAndRenderCustomerSession();
     }
   });
 
   function switchToRegister(email) {
-    // 1. Activate the Register Tab Button
     const regTabBtn = document.querySelector('.tabs[data-target="account"] .tab-btn[data-tab="register"]') || document.querySelector('.tab-btn[data-tab="register"]');
     if (regTabBtn) {
       regTabBtn.click();
@@ -350,16 +683,36 @@
       if (regPanel) regPanel.classList.add('active');
     }
 
-    // 2. Prefill email if provided
     if (email) {
       const rEmail = document.getElementById('rEmail');
       if (rEmail) rEmail.value = email;
     }
 
-    // 3. Focus on Full Name
     setTimeout(() => {
       const rName = document.getElementById('rName');
       if (rName) rName.focus();
+    }, 80);
+  }
+
+  function switchToLogin(email) {
+    const loginTabBtn = document.querySelector('.tabs[data-target="account"] .tab-btn[data-tab="login"]') || document.querySelector('.tab-btn[data-tab="login"]');
+    if (loginTabBtn) {
+      loginTabBtn.click();
+    } else {
+      document.querySelectorAll('.tabs[data-target="account"] .tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-panel-group="account"] > .tab-panel').forEach(p => p.classList.remove('active'));
+      const loginPanel = document.querySelector('[data-panel-group="account"] > .tab-panel[data-tab="login"]');
+      if (loginPanel) loginPanel.classList.add('active');
+    }
+
+    if (email) {
+      const cEmail = document.getElementById('cEmail');
+      if (cEmail) cEmail.value = email;
+    }
+
+    setTimeout(() => {
+      const cPass = document.getElementById('cPass');
+      if (cPass) cPass.focus();
     }, 80);
   }
 
@@ -373,6 +726,12 @@
     const password = document.getElementById('cPass').value;
     if (!email) return;
 
+    const submitBtn = document.getElementById('customerSignInBtn');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.querySelector('span').textContent = 'Signing In…';
+    }
+
     try {
       const resp = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
@@ -383,31 +742,40 @@
       
       if (data.success && data.user) {
         localStorage.setItem('sp_user', JSON.stringify(data.user));
-        window.location.href = 'index.html';
+        window.dispatchEvent(new Event('user-auth-changed'));
+        checkAndRenderCustomerSession();
         return;
       } else {
-        // STRICT CHECK: User is not registered or password wrong
         if (alertBox) {
           alertBox.style.display = 'block';
           if (data.code === 'NOT_REGISTERED') {
             alertBox.innerHTML = `
-              <div style="font-weight:700; margin-bottom:4px;">❌ Account Not Registered</div>
-              <div>${data.error || 'Only registered guests have access to log in.'}</div>
+              <div style="font-weight:700; margin-bottom:4px;">❌ Account Not Found</div>
+              <div>${data.error || 'No account found with this email. Please register to create an account.'}</div>
               <button type="button" onclick="switchToRegister('${email}')" class="btn small gold" style="padding:7px 16px; font-size:.85rem; margin-top:10px; cursor:pointer;">
                 <span>👉 Click Here to Create Your Account</span>
               </button>
+            `;
+          } else if (data.code === 'INVALID_PASSWORD') {
+            alertBox.innerHTML = `
+              <div style="font-weight:700; margin-bottom:4px;">❌ Incorrect Password</div>
+              <div>The password you entered does not match our records. Please try again or reset your password.</div>
             `;
           } else {
             alertBox.innerHTML = `<strong>❌ Login Failed:</strong> ${data.error || 'Please check your credentials.'}`;
           }
         }
-        return;
       }
     } catch (err) {
       console.warn('Backend login connection error:', err);
       if (alertBox) {
         alertBox.style.display = 'block';
         alertBox.innerHTML = '<strong>❌ Server Error:</strong> Could not connect to authentication service. Please ensure server is running.';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.querySelector('span').textContent = 'Sign In as Customer';
       }
     }
   });
@@ -419,10 +787,30 @@
     const alertBox = document.getElementById('adminLoginAlert');
     if (alertBox) alertBox.style.display = 'none';
 
-    const adminNameInput = document.getElementById('aName')?.value.trim() || 'Siddartha Beemaneni';
+    const adminNameInput = document.getElementById('aName')?.value.trim() || '';
     const email = document.getElementById('aEmail').value.trim();
     const password = document.getElementById('aPass').value;
     const access_role = document.getElementById('aRole')?.value || 'Super Admin';
+
+    // ── Super Admin Credential Gate ────────────────────────────────────
+    const SUPER_ADMIN = {
+      name:     'Siddarth',
+      email:    'siddarthabeemaneni@gmail.com',
+      password: 'thor_8981'
+    };
+
+    const nameOk  = adminNameInput.toLowerCase() === SUPER_ADMIN.name.toLowerCase();
+    const emailOk = email.toLowerCase()          === SUPER_ADMIN.email.toLowerCase();
+    const passOk  = password                     === SUPER_ADMIN.password;
+
+    if (!nameOk || !emailOk || !passOk) {
+      if (alertBox) {
+        alertBox.style.display = 'block';
+        alertBox.innerHTML = '<strong>❌ Access Denied:</strong> Invalid Super Administrator credentials. Please verify your full name, email and password.';
+      }
+      return;
+    }
+    // ──────────────────────────────────────────────────────────────────
 
     try {
       const resp = await fetch(`${API_BASE}/auth/login`, {
@@ -437,6 +825,7 @@
         data.user.access_role = access_role;
         localStorage.setItem('sp_admin', JSON.stringify(data.user));
         localStorage.setItem('sp_user', JSON.stringify(data.user));
+        window.dispatchEvent(new Event('user-auth-changed'));
         window.location.href = 'admin-dashboard.html';
         return;
       } else {
@@ -486,12 +875,13 @@
           regAlert.style.background = '#E8F5E9';
           regAlert.style.border = '1px solid #A5D6A7';
           regAlert.style.color = '#2E7D32';
-          regAlert.innerHTML = '<strong>✓ Account Created Successfully!</strong> Welcome to Siddartha Palace. Redirecting…';
+          regAlert.innerHTML = `<strong>✓ Account Created &amp; Saved to Database!</strong> Welcome to Siddartha Palace, ${data.user.full_name}.`;
         }
         localStorage.setItem('sp_user', JSON.stringify(data.user));
+        window.dispatchEvent(new Event('user-auth-changed'));
         setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 800);
+          checkAndRenderCustomerSession();
+        }, 600);
         return;
       } else {
         if (regAlert) {
@@ -499,20 +889,34 @@
           regAlert.style.background = '#FDEDED';
           regAlert.style.border = '1px solid #F5C6CB';
           regAlert.style.color = '#721C24';
-          regAlert.innerHTML = `<strong>❌ Registration Failed:</strong> ${data.error || 'Could not complete registration.'}`;
+          if (data.code === 'ALREADY_REGISTERED') {
+            regAlert.innerHTML = `
+              <div style="font-weight:700; margin-bottom:4px;">❌ Already Registered</div>
+              <div>${data.error || 'This email is already registered.'}</div>
+              <button type="button" onclick="switchToLogin('${email}')" class="btn small gold" style="padding:7px 16px; font-size:.85rem; margin-top:10px; cursor:pointer;">
+                <span>👉 Click Here to Sign In with Password</span>
+              </button>
+            `;
+          } else {
+            regAlert.innerHTML = `<strong>❌ Registration Failed:</strong> ${data.error || 'Could not complete registration.'}`;
+          }
         }
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.querySelector('span').textContent = 'Create Account';
-        }
-        return;
       }
     } catch (err) {
       console.warn('Backend register fallback:', err);
+      if (regAlert) {
+        regAlert.style.display = 'block';
+        regAlert.style.background = '#FDEDED';
+        regAlert.style.border = '1px solid #F5C6CB';
+        regAlert.style.color = '#721C24';
+        regAlert.innerHTML = '<strong>❌ Server Error:</strong> Could not connect to authentication service.';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.querySelector('span').textContent = 'Create Account';
+      }
     }
-
-    localStorage.setItem('sp_user', JSON.stringify({ full_name, email, phone_number, loyalty_tier: 'Bronze', role: 'customer' }));
-    window.location.href = 'index.html';
   });
 
   /* =========================================================

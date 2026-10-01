@@ -43,3 +43,4 @@ ALTER TABLE housekeeping_tasks ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
 -- 3. ANALYZE & OPTIMIZE TABLE STATISTICS FOR QUERY OPTIMIZER
 -- ----------------------------------------------------------------------------
 ANALYZE TABLE guests, rooms, reservations, reservation_rooms, invoices, payments, users;
+yh

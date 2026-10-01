@@ -39,10 +39,13 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(concurrencyShield);
 
-/* ---------- Serve Static Assets with Browser Caching ---------- */
+/* ---------- Serve Static Assets (Live Updates) ---------- */
 app.use(express.static(path.join(__dirname, '..'), {
-  maxAge: '1h',
-  etag: true
+  maxAge: 0,
+  etag: false,
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  }
 }));
 
 /* ---------- API Routes ---------- */
@@ -72,20 +75,26 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-/* ---------- 404 & Global Error Handling Middleware ---------- */
+/* ---------- 404 Handler ---------- */
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, error: `API route not found: ${req.method} ${req.path}` });
+  }
+  next();
+});
+
+/* ---------- Global Error Handling Middleware ---------- */
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error('⚠️ [API Error Handler]:', err.message);
-  res.status(500).json({
+  res.status(err.status || 500).json({
     success: false,
-    error: 'Internal server processing error. Dual-tier fallback active.'
+    error: err.message || 'Internal server processing error. Dual-tier fallback active.'
   });
 });
 
 /* ---------- Server Startup ---------- */
 async function start() {
-  await testConnection();
-  startReminderCron();
-
   const server = app.listen(PORT, () => {
     console.log(`\n  ╔═════════════════════════════════════════════════╗`);
     console.log(`  ║   🏰 SIDDARTHA PALACE ENTERPRISE ENGINE READY   ║`);
@@ -100,6 +109,10 @@ async function start() {
   // Keep connections alive efficiently
   server.keepAliveTimeout = 65000;
   server.headersTimeout   = 66000;
+
+  // Background initialization
+  testConnection();
+  startReminderCron();
 }
 
 start();

@@ -1,14 +1,16 @@
 [
   {
     "customer_id": 1001,
-    "full_name": "Siddartha Beemaneni",
+    "full_name": "Siddarth",
     "email": "siddarthabeemaneni@gmail.com",
-    "phone_number": "+917396704027",
+    "phone_number": "7396704027",
+    "password": "thor_8981",
     "nationality": "India",
     "loyalty_tier": "Platinum",
-    "auth_provider": "google",
-    "password": "Password123",
-    "created_at": "2026-08-28T00:00:00.000Z"
+    "auth_provider": "email",
+    "created_at": "2026-08-28T00:00:00.000Z",
+    "updated_at": "2026-10-01T09:47:26.058Z",
+    "last_login": "2026-10-01T09:47:26.058Z"
   },
   {
     "customer_id": 1002,
@@ -37,12 +39,51 @@
     "full_name": "Priya Sharma",
     "email": "priya.sharma@gmail.com",
     "phone_number": "+919876543210",
-    "password": "",
+    "password": "RoyalPassword2026",
     "nationality": "India",
     "loyalty_tier": "Bronze",
     "auth_provider": "email",
     "created_at": "2026-08-28T16:47:35.412Z",
-    "updated_at": "2026-08-28T16:47:35.423Z",
-    "last_login": "2026-08-28T16:47:35.423Z"
+    "updated_at": "2026-08-29T04:40:56.694Z",
+    "last_login": "2026-08-29T04:40:56.694Z"
+  },
+  {
+    "customer_id": 1787978457370,
+    "full_name": "Vikramaditya Verma",
+    "email": "vikramaditya@example.com",
+    "phone_number": "+919876543210",
+    "password": "RoyalPassword2026",
+    "nationality": "India",
+    "loyalty_tier": "Bronze",
+    "auth_provider": "email",
+    "created_at": "2026-08-29T04:40:56.657Z",
+    "updated_at": "2026-08-29T04:40:56.690Z",
+    "last_login": "2026-08-29T04:40:56.690Z"
+  },
+  {
+    "customer_id": 1790846873271,
+    "full_name": "Siddartha Beemaneni",
+    "email": "xyz@gmail.com",
+    "phone_number": "9737399290",
+    "password": "thor@8981",
+    "nationality": "India",
+    "loyalty_tier": "Bronze",
+    "auth_provider": "email",
+    "created_at": "2026-10-01T09:27:52.987Z",
+    "updated_at": "2026-10-01T09:45:09.524Z",
+    "last_login": "2026-10-01T09:45:09.524Z"
+  },
+  {
+    "customer_id": 1790847991683,
+    "full_name": "sidhu",
+    "email": "sidhuprime@gmail.com",
+    "phone_number": "9393202002",
+    "password": "sidhu_8981",
+    "nationality": "India",
+    "loyalty_tier": "Bronze",
+    "auth_provider": "email",
+    "created_at": "2026-10-01T09:46:31.375Z",
+    "updated_at": "2026-10-01T09:46:31.375Z",
+    "last_login": "2026-10-01T09:46:31.375Z"
   }
 ]

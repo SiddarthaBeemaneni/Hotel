@@ -75,20 +75,31 @@ async function runDatabaseInit() {
     console.log('------------------------------------------------------');
     console.log('  📊 DATABASE VERIFICATION & RECORD COUNTS');
     console.log('------------------------------------------------------');
-    
-    const [guests] = await connection.query('SELECT COUNT(*) as count FROM guests');
-    const [rooms] = await connection.query('SELECT COUNT(*) as count FROM rooms');
-    const [reservations] = await connection.query('SELECT COUNT(*) as count FROM reservations');
-    const [employees] = await connection.query('SELECT COUNT(*) as count FROM employees');
-    const [payments] = await connection.query('SELECT COUNT(*) as count FROM payments');
-    const [menu] = await connection.query('SELECT COUNT(*) as count FROM menu_items');
 
-    console.log(`  • Guests:        ${guests[0].count} records`);
-    console.log(`  • Rooms:         ${rooms[0].count} records`);
-    console.log(`  • Reservations:  ${reservations[0].count} records`);
-    console.log(`  • Employees:     ${employees[0].count} records`);
-    console.log(`  • Payments:      ${payments[0].count} records`);
-    console.log(`  • Menu Items:    ${menu[0].count} records`);
+    async function safeCount(conn, table) {
+      try {
+        const [rows] = await conn.query(`SELECT COUNT(*) as count FROM \`${table}\``);
+        return rows[0].count;
+      } catch (_) { return 'N/A (table not yet created)'; }
+    }
+
+    const counts = {
+      customers:    await safeCount(connection, 'customers'),
+      rooms:        await safeCount(connection, 'rooms'),
+      bookings:     await safeCount(connection, 'bookings'),
+      tenants:      await safeCount(connection, 'tenants'),
+      rent_payments:await safeCount(connection, 'rent_payments'),
+      employees:    await safeCount(connection, 'employees'),
+      menu_items:   await safeCount(connection, 'menu_items'),
+    };
+
+    console.log(`  • Customers:      ${counts.customers} records`);
+    console.log(`  • Rooms:          ${counts.rooms} records`);
+    console.log(`  • Bookings:       ${counts.bookings} records`);
+    console.log(`  • Tenants:        ${counts.tenants} records`);
+    console.log(`  • Rent Payments:  ${counts.rent_payments} records`);
+    console.log(`  • Employees:      ${counts.employees} records`);
+    console.log(`  • Menu Items:     ${counts.menu_items} records`);
 
     console.log('\n✓ Database initialization finished with 100% success!');
     console.log('======================================================\n');

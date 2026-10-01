@@ -4,13 +4,18 @@
 
 const express = require('express');
 const router  = express.Router();
-const { pool } = require('../db');
+const { executeWithRetry } = require('../db');
 const { sendRemindersNow } = require('../services/reminderService');
+
+function dbOffline(res) {
+  return res.status(503).json({ success: false, error: 'Database offline. Reminder log unavailable.' });
+}
 
 /* GET /api/reminders/log — view reminder history */
 router.get('/log', async (req, res) => {
   try {
     const { tenant_id, month_year, limit } = req.query;
+    const safeLimit = Math.min(parseInt(limit) || 50, 200);
     let sql = `
       SELECT rl.*, t.full_name, t.phone_number, r.room_number
       FROM reminder_logs rl
@@ -24,11 +29,12 @@ router.get('/log', async (req, res) => {
     if (month_year) { sql += ' AND rl.month_year = ?'; params.push(month_year); }
 
     sql += ' ORDER BY rl.sent_on DESC';
-    sql += ` LIMIT ${parseInt(limit) || 50}`;
+    sql += ` LIMIT ${safeLimit}`;
 
-    const [rows] = await pool.execute(sql, params);
+    const [rows] = await executeWithRetry(sql, params);
     res.json({ success: true, data: rows });
   } catch (err) {
+    if (err.code === 'ECONNREFUSED' || err.code === 'ER_ACCESS_DENIED_ERROR') return dbOffline(res);
     res.status(500).json({ success: false, error: err.message });
   }
 });

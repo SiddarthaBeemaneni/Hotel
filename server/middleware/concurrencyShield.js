@@ -34,13 +34,17 @@ function concurrencyShield(req, res, next) {
     serverMetrics.peakConcurrentRequests = serverMetrics.activeConcurrentRequests;
   }
 
-  // Response completion cleanup
-  res.on('finish', () => {
-    serverMetrics.activeConcurrentRequests = Math.max(0, serverMetrics.activeConcurrentRequests - 1);
-  });
-  res.on('close', () => {
-    serverMetrics.activeConcurrentRequests = Math.max(0, serverMetrics.activeConcurrentRequests - 1);
-  });
+  // Response completion cleanup — guard against double-decrement
+  // (both 'finish' and 'close' can fire on a normal response)
+  let counted = false;
+  function decrementActive() {
+    if (!counted) {
+      counted = true;
+      serverMetrics.activeConcurrentRequests = Math.max(0, serverMetrics.activeConcurrentRequests - 1);
+    }
+  }
+  res.on('finish', decrementActive);
+  res.on('close',  decrementActive);
 
   // Client IP extraction
   const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
