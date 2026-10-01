@@ -1,10 +1,10 @@
 # 👑 Siddartha Palace — Hotel Management System
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-2ea44f?style=for-the-badge&logo=github)](https://siddarthabeemaneni.github.io/Hotel-Management/siddartha-palace/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-2ea44f?style=for-the-badge&logo=github)](https://siddarthabeemaneni.github.io/Hotel-Management/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-SiddarthaBeemaneni%2FHotel--Management-181717?style=for-the-badge&logo=github)](https://github.com/SiddarthaBeemaneni/Hotel-Management)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-339933?style=for-the-badge&logo=node.js)](https://nodejs.org)
 
-> 🌐 **Live Website**: **[https://siddarthabeemaneni.github.io/Hotel-Management/siddartha-palace/](https://siddarthabeemaneni.github.io/Hotel-Management/siddartha-palace/)**
+> 🌐 **Live Website**: **[https://siddarthabeemaneni.github.io/Hotel-Management/](https://siddarthabeemaneni.github.io/Hotel-Management/)**
 
 A full-stack hotel and PG management web application built with **HTML/CSS/JS + Express.js + MySQL + Twilio**.
 
