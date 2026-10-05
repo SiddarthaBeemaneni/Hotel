@@ -1,10 +1,10 @@
 # 👑 Siddartha Palace — Hotel Management System
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-2ea44f?style=for-the-badge&logo=github)](https://siddarthabeemaneni.github.io/Hotel-Management/)
-[![GitHub Repo](https://img.shields.io/badge/GitHub-SiddarthaBeemaneni%2FHotel--Management-181717?style=for-the-badge&logo=github)](https://github.com/SiddarthaBeemaneni/Hotel-Management)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-2ea44f?style=for-the-badge&logo=github)](https://siddarthabeemaneni.github.io/Hotel/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-SiddarthaBeemaneni%2FHotel-181717?style=for-the-badge&logo=github)](https://github.com/SiddarthaBeemaneni/Hotel)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-339933?style=for-the-badge&logo=node.js)](https://nodejs.org)
 
-> 🌐 **Live Website**: **[https://siddarthabeemaneni.github.io/Hotel-Management/](https://siddarthabeemaneni.github.io/Hotel-Management/)**
+> 🌐 **Live Website**: **[https://siddarthabeemaneni.github.io/Hotel/](https://siddarthabeemaneni.github.io/Hotel/)**
 
 A full-stack hotel and PG management web application built with **HTML/CSS/JS + Express.js + MySQL + Twilio**.
 
@@ -137,8 +137,8 @@ siddartha-palace/
 
 ### 1. Clone & install
 ```bash
-git clone https://github.com/SiddarthaBeemaneni/Hotel-Management.git
-cd Hotel-Management/siddartha-palace/server
+git clone https://github.com/SiddarthaBeemaneni/Hotel.git
+cd Hotel/siddartha-palace/server
 npm install
 ```
 
